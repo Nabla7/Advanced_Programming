@@ -1,5 +1,7 @@
 ## **Advanced Programming in C++** 
 
+### Slides provided by Brent Van Bladel
+
 # Chapter 1 : Basics
 
 ### **Introduction**
@@ -128,3 +130,132 @@
 ### **Key Takeaways**:
 * No definition creates ambiguity.
 * Multiple definitions create confusion on which to select.
+
+# Chapter 2 : **Functions**
+
+- **Purpose**: 
+  - Break programs into smaller, simpler pieces.
+  - Enhance structure, readability, and comprehension.
+  - Abstraction and self-documenting.
+  - Reusability & reduced redundancy.
+
+### **Function Terminology**
+- **Type**: Refers to the return value type.
+  ```cpp
+  int functionName(); // "int" is the type.
+  ```
+  
+- **Signature**: Function name + parameter types.
+  ```cpp
+  void display(int, double); // "display(int, double)" is the signature.
+  ```
+
+- **Prototype**: Type + signature (function declaration).
+  ```cpp
+  int sum(int, int); // This is a prototype.
+  ```
+
+### **Declaration vs Definition**
+- **Declaration**: Prototype + optional function specifiers such as `inline`, `constexpr`, `noexcept`, `nodiscard`, and more. 
+
+  ```cpp
+  inline int square(int x); // Declaration with "inline" specifier.
+  ```
+
+- **Definition**: Declaration + function body.
+
+  ```cpp
+  int square(int x) { 
+      return x*x; 
+  } // This is a definition.
+  ```
+
+### **Inline Functions**
+- A suggestion to the compiler to expand the function in line when called.
+- Advantages:
+  - Speeds up program by avoiding function call overhead.
+  - Allows function definitions in header files.
+- Disadvantages:
+  - Increases executable size.
+  - Inlining is resolved at compile time, increasing compilation time.
+  ```cpp
+  inline int add(int a, int b) {
+      return a + b;
+  }
+  ```
+
+### **Constexpr Functions**
+- Evaluated at compile-time.
+- Advantages:
+  - Faster execution by avoiding function call and calculation overhead.
+  - Reduces executable size.
+- Disadvantages:
+  - Increases compile time.
+  - Limited usability.
+  ```cpp
+  constexpr int factorial(int n) {
+      return (n <= 1) ? 1 : n * factorial(n - 1);
+  }
+  ```
+
+### **Noexcept Functions**
+- Indicates the function doesn't throw exceptions.
+- Optimizations based on this.
+  ```cpp
+  int divide(int a, int b) noexcept {
+      return (b != 0) ? a / b : 0;
+  }
+  ```
+
+### **Nodiscard Functions**
+- Ensures return value should be used.
+  ```cpp
+  [[nodiscard]] int compute();
+  ```
+
+### **Function Overloading & Resolution**
+- Functions with the same name but different parameters.
+- Compiler tries to find the best match.
+  ```cpp
+  void display(int a);
+  void display(double b);
+  ```
+
+### **Namespaces**
+- **Purpose**: Avoid name conflicts & logically group entities.
+  ```cpp
+  namespace Math {
+      int add(int, int);
+  }
+  ```
+
+- **Accessing Namespaces**:
+  - **Explicit Qualification**: `namespace-name::member-name`
+    ```cpp
+    Math::add(1, 2);
+    ```
+  - **Using-Directives**: Introduce a namespace into the scope.
+    ```cpp
+    using namespace Math;
+    ```
+  - **Using-Declarations**: Introduce a synonym in the scope.
+    ```cpp
+    using Math::add;
+    ```
+
+- **Unnamed Namespaces**: Auto included in current scope.
+  ```cpp
+  namespace {
+      void internalFunction();
+  }
+  ```
+
+- **Namespace Management**:
+  - **Nesting**: Hierarchical topology.
+  - **Composition**: Merge disjunct namespaces.
+  - **Selection**: Select entities from various namespaces.
+  - **Extension**: Add to existing namespace.
+  - **Alias**: Alternative names for a namespace.
+    ```cpp
+    namespace MathOps = Math;
+    ```
