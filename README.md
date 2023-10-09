@@ -37,12 +37,16 @@
 
 - Source File -> Preprocessing -> Compile Time -> Linking Time -> Executable File -> Loading Time -> Runtime
 
+<img src=images/cpp_timings.png width="250"/>
+
 ### Binding
 
-- **Definition**: Associating properties with names.
+- **Definition**: Associating properties with names. (at different times)
   
 - **Binding Times**:
-  ![]
+  
+  <img src=images/binding.png width="250"/>
+
   - Type of x: Compile time
   - Reference to do_something*: Linking time
   - Memory location for x: Loading time
@@ -69,10 +73,7 @@
   - Every variable has both a static type and a dynamic type.
   
 - **Examples**:
-  - Variable base: Static=Base, Dynamic=Base
-  - Variable derived: Static=Derived, Dynamic=Derived
-  - Variable b: Static=Base, Dynamic=Base or Derived
-  - Variable b: Static=Base, Dynamic changes from Base to Derived
+ > add some good examples
 
 ### Declarations & Definitions
 
