@@ -259,3 +259,91 @@
     ```cpp
     namespace MathOps = Math;
     ```
+
+# Chapter 3 : Memory Management
+
+### **Memory Concepts**
+* **Variable**: An abstraction of memory space.
+  * **Attributes**:
+    * **Name**: How to reference in program.
+    * **Address**: Memory location.
+    * **Type**: Data interpretation.
+    * **Storage Duration**: When memory is available.
+    * **Lifetime**: When memory can be referenced.
+    ```cpp
+    int x;  // Name: x, Type: int, Storage Duration: automatic
+    ```
+
+### **Memory Areas: Stack vs Heap**
+* **Stack**:
+  * For local variables, function arguments, control information.
+  * Faster, but limited in size.
+  ```cpp
+  int local_variable = 42;  // Stored on the stack
+  ```
+* **Heap**:
+  * For dynamic memory allocation.
+  * Flexible in size but slower.
+  ```cpp
+  int* heap_var = new int(42);  // 42 is stored on the heap
+  ```
+
+### **Variable Storage and Duration**
+* Four Storage Durations:
+  * **Automatic**: Lives within its scope.
+  * **Static**: Lives for program's duration.
+  * **Thread**: Lives for the thread's duration.
+  * **Dynamic**: Lives between allocation & deallocation.
+  ```cpp
+  static int persist_var = 10;  // Static storage duration
+  ```
+
+### **Lifetime of Variables**
+* Duration from memory allocation to memory release.
+
+### **Memory in C++: Examples**
+* A focus on bits and bytes allocation in various scenarios.
+  ```cpp
+  bool flag;  // Allocates 8 bits in memory
+  ```
+
+### **Vector Capacity & Memory**
+* Understanding how `std::vector` allocates and grows memory.
+  ```cpp
+  std::vector<int> vec = {1, 2, 3};  // Memory allocated on stack & heap
+  ```
+
+### **Strings & Memory**
+* `std::string` implementation.
+  * How strings are stored on stack and heap.
+  * **Short String Optimization (SSO)**: Storing short strings on stack.
+  ```cpp
+  std::string short_str = "Hi";  // Likely uses SSO
+  ```
+
+### **Copying Strings**
+* **Deep Copy**: Entire data is duplicated.
+* **Shallow Copy**: Only references are copied.
+  ```cpp
+  std::string str1 = "Hello";
+  std::string str2 = str1;  // Deep copy
+  ```
+
+### **Optimizing String Operations**
+* **`std::string_view`**: A non-owning reference to a string.
+  * Avoids costly deep copies.
+  ```cpp
+  std::string_view sv = "example";  // No dynamic allocation
+  ```
+
+### **Passing Variables**
+* **By Reference**: Efficient, no additional memory.
+* **By Pointer**: Uses memory for pointer storage.
+  ```cpp
+  void func_by_ref(int& x);
+  void func_by_ptr(int* x);
+  ```
+
+### **Special Memory Concepts**
+* **nullptr**: Represents a null pointer.
+* **`std::optional`**: Extends type domain by adding a "null" value without dynamic memory allocation.
