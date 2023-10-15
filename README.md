@@ -347,3 +347,121 @@
 ### **Special Memory Concepts**
 * **nullptr**: Represents a null pointer.
 * **`std::optional`**: Extends type domain by adding a "null" value without dynamic memory allocation.
+
+# Chapter 4: Classes & Memory
+
+### **Classes**
+* A user-defined type abstracting a concept.
+  * Groups data forming a broader concept.
+  * Links functionality to data.
+  
+  ```cpp
+  class Dog {
+      string name;
+      int age;
+      
+      public:
+          void bark() { cout << "Woof!"; }
+  };
+  ```
+
+### **Class vs. Object**
+* Classes serve as blueprints, objects are instances of those blueprints.
+
+  ```cpp
+  Dog myDog;  // myDog is an object of the Dog class
+  ```
+
+### **Memory Layout of a Class**
+* Visual representation showing memory allocations in classes.
+
+  ```cpp
+  class Coordinate {
+      int x, y;  // memory layout sequentially in most cases
+  };
+  ```
+
+### **Constructors**
+* Explicit method to initialize an object.
+  ```cpp
+  class Dog {
+      string name;
+      public:
+          Dog(string n) : name(n) {}
+  };
+  Dog rex("Rex");
+  ```
+
+### **Default Constructor**
+* Initializes an object without specific data.
+  ```cpp
+  class Dog {
+      public:
+          Dog() {}
+  };
+  ```
+
+### **Implicit Default Constructor**
+* Automatically provided if no user-defined constructors exist.
+  ```cpp
+  class Dog {};  // Compiler creates default constructor implicitly
+  ```
+
+### **Default Keyword**
+* Request compiler to generate a default constructor.
+  ```cpp
+  class Dog {
+      public:
+          Dog() = default;
+  };
+  ```
+
+### **In-Class Initializers**
+* Data members initialized within class definition.
+  ```cpp
+  class Dog {
+      int age = 5;
+  };
+  ```
+
+### **Member Initializer Lists**
+* More efficient than assigning values in the constructor body.
+  ```cpp
+  class Rectangle {
+      int width, height;
+      public:
+          Rectangle(int w, int h) : width(w), height(h) {}
+  };
+  ```
+
+### **Copy Constructor**
+* Initializes one object using another object of the same class.
+  ```cpp
+  class Dog {
+      public:
+          Dog(const Dog &d) { /* ... */ }
+  };
+  ```
+
+### **Copy Constructor vs Assignment Operator**
+* Understanding the difference in operation.
+  ```cpp
+  Dog d1 = d2;     // Copy constructor
+  d1 = d2;         // Assignment operator
+  ```
+
+### **Bracket Initialization vs Parentheses**
+* Always opt for braced initialization.
+  ```cpp
+  Dog d1{"Rex"};   // Braced initialization
+  Dog d2("Rex");   // Parentheses, but be careful with ambiguities
+  ```
+
+### **Destructors**
+* Method to destroy an object.
+  ```cpp
+  class Dog {
+      public:
+          ~Dog() { /* Cleanup code here */ }
+  };
+  ```
