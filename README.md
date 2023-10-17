@@ -465,3 +465,362 @@
           ~Dog() { /* Cleanup code here */ }
   };
   ```
+
+  # Chapter 5: Advanced Memory
+
+  ### **Memory Exercises**
+
+### What is the output of this code?
+
+```cpp
+int main()
+{
+    int n = 1;
+    int&& ref = n;
+    cout << n << endl;
+    cout << ref << endl;
+    return 0;
+}
+```
+
+### Output:
+Compilation error: 
+```
+cannot bind rvalue reference of type 'int&&' to lvalue of type 'int'
+```
+
+---
+
+### Summary & Clarification:
+
+The code attempts to bind an rvalue reference (`int&&`) to an lvalue (`n`). In C++, rvalue references are primarily used to represent temporary objects that can be safely moved from. However, `n` is not a temporary object, it's an lvalue. This causes the compilation error.
+
+To fix this error, one should either:
+1. Use an lvalue reference (`int&`).
+2. Bind the rvalue reference to an actual rvalue or temporary object.
+
+---
+
+## What is the output of this code?
+
+```cpp
+int main()
+{
+    int n = 1;
+    int&& ref = std::move(n);
+    cout << n << endl;
+    cout << ref << endl;
+    return 0;
+}
+```
+
+### Output:
+Probably "`1 1`", but there's no guarantee `n` remains consistent after the move.
+
+### Summary & Clarification:
+
+The code attempts to bind an rvalue reference (`int&&`) to `n` using `std::move`, which casts its argument into an rvalue. This allows for the binding to be successful. However, after performing a move, the state of the moved-from object (in this case, `n`) is unspecified but valid. That means the value might still be `1`, but it's not guaranteed. This behavior is dependent on the specific type and its implementation. For fundamental types like `int`, the value usually remains unchanged after a move, but it's best not to rely on that.
+
+---
+
+## What is the output of this code?
+
+```cpp
+int main()
+{
+    int n = 1;
+    double&& rref = n;
+    cout << n << endl;
+    cout << rref << endl;
+    return 0;
+}
+```
+
+### Output:
+`1 1`
+
+### Summary & Clarification:
+
+The code binds an rvalue reference of type `double` (`double&&`) to the integer variable `n`. When `n` is assigned to `rref`, an implicit conversion takes place, creating a temporary `double` with value `1.0`. The rvalue reference `rref` binds to this temporary. The output reflects this conversion with both `n` and `rref` displaying the value "1".
+
+---
+
+### 1. Binding a Non-Const Reference to an Rvalue
+
+```cpp
+void print(int& x){
+    cout << x << endl;
+}
+int main(){
+    print(5);
+    return 0;
+}
+```
+
+**Output**: Compiler error: "cannot bind non-const lvalue reference of type 'int&' to an rvalue of type 'int'."
+
+**Explanation**: This example tries to bind a non-const reference (`int& x`) to an rvalue (`5`). Non-const references require an lvalue, but here we have an rvalue (`5`). This results in a compiler error since you can't modify a literal directly.
+
+---
+
+### 2. Binding a Const Reference to an Rvalue
+
+```cpp
+void print(const int& x){
+    cout << x << endl;
+}
+int main(){
+    print(5);
+    return 0;
+}
+```
+
+**Output**: 5
+
+**Explanation**: This example demonstrates binding a const reference to an rvalue. Const references can bind to rvalues without any issues. The `const int&` accepts the literal `5`, and the temporary lifetime of `5` is extended for the duration of the function call.
+
+---
+
+### 3. Attempting to Bind a Return Value to a Non-Const Reference
+
+```cpp
+class Foo{
+    private:
+        int x{0};
+    public:
+        int getX() { return x; };
+        void print() { cout << x << endl; };
+};
+
+int main(){
+    Foo foo;
+    int& x_ref = foo.getX();
+    x_ref = 10;
+    foo.print();
+    return 0;
+}
+```
+
+**Output**: Compiler error: "cannot bind non-const lvalue reference of type 'int&' to an rvalue of type 'int'."
+
+**Explanation**: In this example, the `getX` method returns an integer by value, producing an rvalue. The code attempts to bind this rvalue to a non-const reference (`int& x_ref`). This is not allowed and thus results in a compiler error. To modify the internal `x` of the `Foo` class using a reference, the method `getX` should return a reference.
+
+---
+
+### What is the output of this code?
+
+```cpp
+class Foo{
+    private:
+        int x{0};
+    public:
+        int& getX() { return x; };
+        void print() { cout << x << endl; };
+};
+
+int main(){
+    Foo foo;
+    int& x_ref = foo.getX();
+    x_ref = 10;
+    foo.print();
+    return 0;
+}
+```
+
+**Output**: 10
+
+**Explanation**: In this example, the `getX` method returns a reference to the integer `x` (an lvalue-reference). This means that when `int& x_ref = foo.getX();` is executed, `x_ref` refers to the same memory location as the `x` in the `Foo` object. Thus, modifying `x_ref` directly changes the value of `x`. The `foo.print()` function will then output the modified value of `x`, which is `10`.
+
+---
+
+### What is the output of this code?
+
+```cpp
+class Foo{
+    private:
+        int x{0};
+    public:
+        int& getX() { return x; };
+        void print() { cout << x << endl; };
+};
+
+int main(){
+    Foo foo;
+    foo.getX() = 10;
+    foo.print();
+    return 0;
+}
+```
+
+**Output**: 10
+
+**Explanation**: Here, the `getX` method returns a reference to the integer `x` (an lvalue-reference). This means you can directly assign a value to what it returns. In the line `foo.getX() = 10;`, the value of `x` inside the `Foo` object is set to `10`. The `foo.print()` function then outputs this value, which is `10`.
+
+**Note**: This behavior can be prevented by having the `getX` method return a `const int&` instead of `int&`, thereby ensuring that the returned reference cannot be used to modify the value of `x`.
+
+---
+
+
+### What is the output of this code?
+
+```cpp
+int& getNumber(){
+    int x = 5;
+    return x;
+}
+
+int main(){
+    cout << getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: Undefined behaviour
+
+**Explanation**: The function `getNumber` is returning a reference to a local variable `x`. Once the function exits, the local variable goes out of scope, resulting in the returned reference being a "dangling reference". This means it refers to a memory location that is no longer valid, leading to undefined behavior when trying to access it in the `main` function.
+
+**Note**: A dangling reference is a reference that outlives the lifetime of the object it refers to. Always ensure that you don't return references to local variables to avoid such issues.
+
+---
+
+### What is the output of this code?
+
+```cpp
+int& getNumber(){
+    static int x = 5;
+    return x;
+}
+
+int main(){
+    cout << getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: 5
+
+**Explanation**: In this code, the function `getNumber` returns a reference to a static local variable `x`. Unlike normal local variables, static local variables retain their values between function calls and have a lifetime from the start of the program until the end of the program. Therefore, returning a reference to a static local variable is safe, and there's no danger of dangling references in this case.
+
+**Note**: A static variable has a static storage duration, and a lifetime from the start of the program until the end of the program.
+
+---
+
+### What is the output of this code?
+
+```cpp
+int&& getNumber(){
+    int x = 5;
+    return std::move(x);
+}
+
+int main(){
+    cout << getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: Undefined behaviour.
+
+**Explanation**: The function `getNumber` returns an rvalue-reference (`int&&`) to a local variable `x`. Despite using `std::move` to turn `x` into an rvalue, the underlying issue remains: the local variable `x` will be destroyed when the function exits, leaving the reference dangling. Accessing this dangling reference, as done in the `main` function, leads to undefined behavior.
+
+**Note**: An rvalue-reference is still a reference, and can become a dangling reference when it refers to an object whose lifetime has ended.
+
+---
+
+### What is the output of this code?
+
+```cpp
+int getNumber(){
+    int x = 5;
+    return std::move(x);
+}
+
+int main(){
+    cout << getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: 5
+
+**Explanation**: The function `getNumber` returns a prvalue (pure rvalue), which would normally be created by copying the local variable `x` to a temporary. Using `std::move` in this case turns `x` into an xvalue (expiring value). However, since `x` is of a simple built-in type (`int`), moving and copying are effectively the same, and the behavior is well-defined. The function returns the value of `x`, which is 5.
+
+**Note**: Using `std::move` with simple built-in types offers no real benefit and can be confusing. It's primarily useful for complex objects that have a move constructor which can perform a shallow copy, transferring ownership of resources and avoiding deep copy operations.
+
+---
+
+### What is the output of this code?
+
+```cpp
+int* getNumber(){
+    int* x_ptr = new int(5);
+    return x_ptr;
+}
+
+int main(){
+    cout << *getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: 5
+
+**Explanation**: The function `getNumber` dynamically allocates an integer on the heap with a value of 5 and returns its pointer. The main function then dereferences this pointer to print the value, which is 5.
+
+**Note**: This program contains a memory leak because the dynamically allocated memory in `getNumber` is not deallocated using `delete`. It's essential to free up the memory to avoid memory leaks, especially in larger applications.
+
+---
+
+### What is the output of this code?
+
+```cpp
+int* getNumber(){
+    int* x_ptr = new int(5);
+    delete x_ptr;
+    return x_ptr;
+}
+
+int main(){
+    cout << *getNumber() << endl;
+    return 0;
+}
+```
+
+**Output**: Undefined behaviour.
+
+**Explanation**: The function `getNumber` dynamically allocates an integer on the heap with a value of 5. However, it then deletes this memory before returning the pointer. Dereferencing a deleted pointer in the main function leads to undefined behaviour. The program may crash, produce unexpected output, or seem to work correctly in some cases, but it's not reliable or safe.
+
+**Note**: A pointer that points to a deleted memory location is known as a dangling pointer. It's crucial to ensure that you don't use pointers after their associated memory has been deallocated.
+
+---
+
+### What is the output of this code?
+
+```cpp
+struct Bar {
+    int a{0};
+    int b{0};
+};
+
+class Foo {
+    private:
+        const Bar& _bar;
+    public:
+        Foo(const Bar& b) : _bar(b) {};
+        int sum() { return _bar.a + _bar.b; }
+};
+
+int main() {
+    Foo foo{Bar{4,2}};
+    cout << foo.sum() << endl;
+    return 0;
+}
+```
+
+**Output**: Undefined behaviour.
+
+**Explanation**: The object `foo` in the `main` function is constructed with a temporary `Bar` object. Normally, temporaries are destroyed at the end of the full-expression in which they are created. However, the lifetime of the temporary `Bar` object is extended to match the lifetime of the reference parameter `b` in the `Foo` constructor. But once the constructor completes, the temporary `Bar` object goes out of scope, and `_bar` in `Foo` becomes a dangling reference. Subsequent usage of this reference, like in the `sum` method, leads to undefined behavior.
+
+**Note**: A reference data member in a class or struct does use memory, typically the same amount as a pointer on the respective platform. It's essential to ensure the lifetime of the referenced object exceeds that of the object containing the reference.
+
+---
