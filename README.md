@@ -974,3 +974,213 @@ int main() {
 **Note**: A reference data member in a class or struct does use memory, typically the same amount as a pointer on the respective platform. It's essential to ensure the lifetime of the referenced object exceeds that of the object containing the reference.
 
 ---
+
+# Chapter 6 : **Class Design**
+
+### **Introduction**
+* A class represents a user-defined data type, capturing both data (attributes) and behavior (methods).
+* Provides a mechanism to encapsulate data and the functions that operate on the data.
+
+### **Classes vs Structs**
+* **Class**: Typically, members are private by default. Meant for complex data structures with both data members and methods.
+* **Struct**: Members are public by default. Best used for passive data structures without behavior.
+  
+  ```cpp
+  class MyClass {
+      int a; // private by default
+  public:
+      void doSomething();
+  };
+
+  struct MyStruct {
+      int a; // public by default
+  };
+  ```
+* **Tip**: Use structs if all members are meant to be public.
+
+### **Class Interface**
+* Represents the set of public members (functions & attributes) that are exposed to users.
+* **Abstract Data Type (ADT)**: A class interface, when designed well, should present an abstract view of the data, hiding the implementation details.
+
+  ```cpp
+  class Stack {
+  public:
+      void push(int);
+      int pop();
+  private:
+      int arr[10];
+      int top;
+  };
+  ```
+
+### **Advantages of Class Interface**
+* **Encapsulation**: Users don't need to know the inner workings.
+* **Localization of Change**: Modifications inside the class won't affect external users as long as the interface remains consistent.
+
+### **Class Interface - Header Files**
+* Class interfaces are typically defined in header files (`ClassName.h`).
+* Implementation of the class is defined in source files (`ClassName.cpp`).
+
+### **#Include and Compilation**
+* When using `#include`, the compiler essentially copies the content of the included file.
+* **Dangers**:
+  * One Definition Rule (ODR) violations.
+  * Cyclic includes leading to infinite loop.
+
+  ```cpp
+  // File: main.cpp
+  #include "Header1.h"
+  #include "Header2.h"
+  ```
+
+### **Solutions to Compilation Dangers**
+* **Include Guards**: Ensure the header file is only included once.
+  * Utilize `#ifndef`, `#define`, and `#endif` preprocessor directives.
+  ```cpp
+  #ifndef REPORTER_H
+  #define REPORTER_H
+  // ... class/interface declaration
+  #endif
+  ```
+* **Forward Declarations**: Declare a class/struct without defining it, which helps avoid cyclic dependencies.
+
+### **Const Member Function**
+* Indicates the member function won't modify the object's state.
+  ```cpp
+  int getValue() const { return value; }
+  ```
+
+### **Mutable Data Member**
+* Allows a data member to be modified even inside a const member function.
+  
+  ```cpp
+  class MyClass {
+  mutable int cache;
+  int data;
+  public:
+      void updateCache() const { cache = data * 2; }  // allowed due to 'mutable'
+  };
+  ```
+
+### **Physical vs Logical Const**
+* **Physical Const**: Ensures the object's memory representation doesn't change (e.g., getter methods).
+* **Logical Const**: From a user's perspective, the object appears unchanged, even if internal, invisible changes occur (e.g., caching).
+
+### **Static Data Members and Member Functions**
+* **Static Data Member**: Shared across all instances of the class. Only one copy exists.
+  ```cpp
+  class MyClass {
+  static int sharedVar;
+  };
+  ```
+
+* **Static Member Function**: Can be called without an instance of the class. Can't access non-static members directly.
+  ```cpp
+  class MyClass {
+  public:
+      static void staticFunction();
+  };
+  ```
+
+### **Operator Overloading**
+* Allows custom behavior for C++ operators for user-defined types.
+  
+  ```cpp
+  class Complex {
+      double real, imag;
+  public:
+      Complex operator + (const Complex& obj);
+  };
+  ```
+
+### **Restrictions in Operator Overloading**
+* Can't overload certain operators like `sizeof`, `typeid`.
+* No modifying existing operator precedence or associativity.
+* Can't introduce new operators.
+* Operators `=`, `&`, and `,` are synthesized if not explicitly defined.
+
+### **Key Takeaways**:
+* Classes provide a structured way to represent and manage data with behaviors.
+* Proper encapsulation ensures code robustness and maintainability.
+* Understanding of operator overloading can allow intuitive operations on custom data types.
+
+---
+
+# Chapter 7 : **Class Derivation**
+
+### **Introduction**
+* **Class** - A user-defined type that provides an abstraction to a concept by grouping data and linking functionality.
+
+### **Relationships between classes**
+1. **Association**
+   * **Aggregation** - "X has a Y" relationship.
+     * Related objects can exist independently.
+     * Weak association.
+     * Implemented via reference or shared pointer.
+   * **Composition** - "X is part of Y" relationship.
+     * Related objects cannot exist independently.
+     * Strong association.
+     * Implemented as a data member or unique pointer.
+   * **Generalization** - "X is a Y" relationship.
+     * Implemented via subclassing.
+
+### **Terminology**
+* **Superclass** or **Base class** - The primary or main class.
+* **Subclass** or **Derived class** - The class that inherits from the Base class.
+
+### **Goals of Class Derivation**
+1. **Interface Inheritance** - Different derived classes can be used through the interface of a common base class.
+2. **Implementation Reuse** - Derived classes can reuse functionalities from the base class.
+
+### **Member Lookup**
+* Process:
+   1. Look in the class scope of `this`.
+   2. If not found, move up in the inheritance chain.
+   3. Stop when the name is found.
+
+### **Access Control**
+* **Public members** - Accessible to everyone.
+* **Protected members** - Accessible only to subclasses.
+* **Private members** - Not accessible to anyone.
+
+### **Data Members in Inheritance**
+* Derived class inherits all data members from the base class.
+* Can introduce new members in the derived class.
+* Cannot access private members of the base class, only public and protected.
+
+### **Memory Layout of a Derived Class**
+* Shows how the memory is structured and allocated for base and derived classes.
+
+### **Construction & Destruction**
+* **Construction** happens from Base to Derived.
+* **Destruction** happens in the reverse order, from Derived to Base.
+
+### **Virtual, Override, and Final**
+* **Virtual Function** - Indicates that a derived class can redefine it.
+* **Override Function** - Indicates it's virtual and redefines the function from the base class.
+* **Final Function** - It's virtual, redefines the base class function, and cannot be overridden by another deriving class.
+
+### **Pure Virtual & Abstract Classes**
+* **Pure Virtual Function** - Indicates every derived class must redefine it.
+* A class with at least one pure virtual function is termed an **Abstract Class**.
+* An **Interface Class** contains only pure virtual functions.
+
+### **Polymorphism**
+* A base class pointer can point to an object of a derived class, allowing different classes to be treated as instances of the same class.
+
+### **Vtable**
+* A mechanism used to support dynamic dispatch or runtime method binding.
+* Each object of a class with virtual functions has a vtable to store addresses of the virtual functions.
+
+### **Virtual Destructor**
+* Always make the destructor virtual to prevent memory leaks.
+
+### **Inheritance Design Principles**
+* **Liskov Substitution Principle** - Objects of a derived class should be able to replace objects of the base class without affecting correctness.
+* **Type Conformity** - Derived classes should respect the base class's conditions and invariants.
+* **Principle of Closed Behavior** - Inherited functionalities should respect the derived class’s conditions and invariants.
+
+### **Key Takeaways**:
+* Inheritance allows classes to inherit properties and behaviors from other classes.
+* Properly leveraging inheritance and polymorphism can lead to efficient and maintainable code structures.
+* Adhering to design principles ensures consistency, maintainability, and extensibility in object-oriented programming.
