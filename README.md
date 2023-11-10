@@ -1184,3 +1184,174 @@ int main() {
 * Inheritance allows classes to inherit properties and behaviors from other classes.
 * Properly leveraging inheritance and polymorphism can lead to efficient and maintainable code structures.
 * Adhering to design principles ensures consistency, maintainability, and extensibility in object-oriented programming.
+
+## Chapter 8 : Design Patterns
+
+### Design Principles
+- **Liskov Substitution Principle**: Objects of a superclass shall be replaceable with objects of its subclasses without affecting the correctness of the program.
+- **Type Conformity**: Ensures that a derived class is compatible with its base class.
+- **Principle of Closed Behavior**: Objects should behave as expected when used as instances of a superclass.
+- **Single-Responsibility Principle (SRP)**: A class should only have one reason to change, focusing on a single functionality.
+- **Open–Closed Principle**: Entities (classes, modules, functions) should be open for extension, but closed for modification.
+- **Low Coupling / High Cohesion**: Minimize dependencies between classes (low coupling) and ensure that elements of a class are functionally related (high cohesion).
+
+### Design Patterns Overview
+- Design patterns provide tested solutions to common software design issues.
+- They adhere to design principles and create a common language for developers.
+- Patterns are analyzed based on the problem they solve, their solution, structure, and benefits/drawbacks.
+
+### Creational Patterns
+- **Factory Method Pattern**:
+  - **Problem**: Creating objects directly within a class using `new` can make the class difficult to extend and maintain.
+  - **Solution**: Replace direct construction with calls to a special factory method.
+  - **Example (C++)**:
+    ```cpp
+    class Product {
+    public:
+        virtual void Operation() = 0;
+    };
+
+    class ConcreteProductA : public Product {
+    public:
+        void Operation() override { /* Implementation */ }
+    };
+
+    class Creator {
+    public:
+        virtual Product* FactoryMethod() = 0;
+    };
+
+    class ConcreteCreatorA : public Creator {
+    public:
+        Product* FactoryMethod() override { return new ConcreteProductA(); }
+    };
+    ```
+
+- **Abstract Factory Pattern**:
+  - **Problem**: Need for creating families of related or dependent objects.
+  - **Solution**: Define an interface for creating an object, but let subclasses decide which class to instantiate.
+  - **Example (C++)**:
+    ```cpp
+    class AbstractProductA {
+    public:
+        virtual void PerformAction() = 0;
+    };
+
+    class ConcreteProductA1 : public AbstractProductA {
+    public:
+        void PerformAction() override { /* Implementation */ }
+    };
+
+    class AbstractFactory {
+    public:
+        virtual AbstractProductA* CreateProductA() = 0;
+    };
+
+    class ConcreteFactory1 : public AbstractFactory {
+    public:
+        AbstractProductA* CreateProductA() override { return new ConcreteProductA1(); }
+    };
+    ```
+
+### Structural Patterns
+- **Adapter Pattern**:
+  - **Problem**: Incompatibility between interfaces of different classes.
+  - **Solution**: Allows classes with incompatible interfaces to work together by wrapping their interfaces.
+  - **Example (C++)**:
+    ```cpp
+    class Target {
+    public:
+        virtual void Request() = 0;
+    };
+
+    class Adaptee {
+    public:
+        void SpecificRequest() { /* Specific Implementation */ }
+    };
+
+    class Adapter : public Target {
+        Adaptee adaptee;
+    public:
+        void Request() override { adaptee.SpecificRequest(); }
+    };
+    ```
+
+- **Bridge Pattern**:
+  - **Problem**: "Explosion" of classes from combining several dimensions of functionality.
+  - **Solution**: Separates an abstraction from its implementation, allowing them to vary independently.
+  - **Example (C++)**:
+    ```cpp
+    class Implementor {
+    public:
+        virtual void OperationImpl() = 0;
+    };
+
+    class ConcreteImplementorA : public Implementor {
+    public:
+        void OperationImpl() override { /* Implementation */ }
+    };
+
+    class Abstraction {
+    protected:
+        Implementor* implementor;
+    public:
+        void Operation() { implementor->OperationImpl(); }
+    };
+    ```
+
+### Behavioral Patterns
+- **Command Pattern**:
+  - **Problem**: Need to issue requests to objects without knowing anything about the operation being requested or the receiver of the request.
+  - **Solution**: Encapsulates a request as an object, thereby allowing for parameterization and queuing of requests.
+  - **Example (C++)**:
+    ```cpp
+    class Command {
+    public:
+        virtual void Execute() = 0;
+    };
+
+    class Receiver {
+    public:
+        void Action() { /* Specific Action */ }
+    };
+
+    class ConcreteCommand : public Command {
+        Receiver* receiver;
+    public:
+        void Execute() override { receiver->Action(); }
+    };
+    ```
+
+- **Observer Pattern**:
+  - **Problem**: One-to-many dependency between objects so that when one object changes state, all its dependents are notified.
+  - **Solution**: Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified
+
+ and updated automatically.
+  - **Example (C++)**:
+    ```cpp
+    class Observer {
+    public:
+        virtual void Update(int state) = 0;
+    };
+
+    class Subject {
+        std::vector<Observer*> observers;
+    public:
+        void Attach(Observer* observer) { observers.push_back(observer); }
+        void Notify(int state) {
+            for (Observer* observer : observers) {
+                observer->Update(state);
+            }
+        }
+    };
+    ```
+
+### Model-View-Controller (MVC)
+- **MVC Pattern**:
+  - **Problem**: Managing the UI for an application and keeping the coupling between the front-end and back-end low.
+  - **Solution**: Separates an application into three interconnected components: the model, the view, and the controller.
+  - **Benefits**: Low coupling, adherence to Single Responsibility Principle, and flexibility to introduce new views or controllers.
+
+### Conclusion
+- Design patterns are essential tools for software development, offering solutions to common design problems, ensuring code maintainability, and promoting best practices.
+- Understanding and correctly implementing these patterns is crucial for creating robust, scalable, and efficient software.
