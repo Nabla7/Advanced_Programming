@@ -2,6 +2,17 @@
 
 ### Slides provided by Brent Van Bladel
 
+- [Chapter 1: Basics](#chapter-1-basics)
+- [Chapter 2: Functions](#chapter-2-functions)
+- [Chapter 3: Memory Management](#chapter-3-memory-management)
+- [Chapter 4: Classes & Memory](#chapter-4-classes--memory)
+- [Chapter 5: Advanced Memory](#chapter-5-advanced-memory)
+- [Chapter 6: Class Design](#chapter-6-class-design)
+- [Chapter 7: Class Derivation](#chapter-7-class-derivation)
+- [Chapter 8: Design Patterns](#chapter-8-design-patterns)
+- [Chapter 9: Multi-threading in C++](#chapter-9-multi-threading-in-c)
+- [Chapter 10: Generic Programming](#chapter-10-generic-programming)
+
 # Chapter 1 : Basics
 
 ### **Introduction**
